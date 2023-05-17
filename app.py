@@ -37,7 +37,7 @@ def seed_database():
         cursor = conn.cursor()
 
         # Check if the table has any data
-        cursor.execute("SELECT COUNT(*) FROM your_table_name;")
+        cursor.execute("SELECT COUNT(*) FROM uber;")
         result = cursor.fetchone()
         user_count = result[0]
 
@@ -47,7 +47,7 @@ def seed_database():
 
             # Create the table if it doesn't exist
             create_table_query = """
-            CREATE TABLE IF NOT EXISTS your_table_name (
+            CREATE TABLE IF NOT EXISTS uber (
                 -- Define your table columns here
             );
             """
@@ -55,7 +55,7 @@ def seed_database():
 
             # Seed the database with the data
             insert_query = """
-            INSERT INTO your_table_name (column1, column2, ...)
+            INSERT INTO uber (column1, column2, ...)
             VALUES (%s, %s, ...);
             """
 
