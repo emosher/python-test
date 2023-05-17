@@ -1,9 +1,11 @@
 import numpy as np
 import pandas as pd
 import streamlit as st
+import psycopg2
+import pyservicebindings
 
 st.title("Uber pickups in NYC")
-st.subheader("Build using Tanzu Application Platform v1.3.2 - AppTest")
+st.subheader("Built using Tanzu Application Platform v1.3.2 - AppTest")
 
 DATE_COLUMN = "date/time"
 DATA_URL = (
@@ -21,9 +23,61 @@ def load_data(nrows):
     return data
 
 
-data_load_state = st.text("Loading data...")
-data = load_data(10000)
-data_load_state.text("Data loaded")
+def seed_database():
+    # Connect to the Postgres database
+    try:
+        db_binding = pyservicebindings.get_binding("POSTGRESQL", "pg")
+        conn = psycopg2.connect(
+            user=db_binding["user"],
+            password=db_binding["password"],
+            host=db_binding["host"],
+            port=db_binding["port"],
+            database=db_binding["database"],
+        )
+        cursor = conn.cursor()
+
+        # Check if the table has any data
+        cursor.execute("SELECT COUNT(*) FROM your_table_name;")
+        result = cursor.fetchone()
+        user_count = result[0]
+
+        # If the table is empty, seed the database
+        if user_count == 0:
+            data = load_data(10000)
+
+            # Create the table if it doesn't exist
+            create_table_query = """
+            CREATE TABLE IF NOT EXISTS your_table_name (
+                -- Define your table columns here
+            );
+            """
+            cursor.execute(create_table_query)
+
+            # Seed the database with the data
+            insert_query = """
+            INSERT INTO your_table_name (column1, column2, ...)
+            VALUES (%s, %s, ...);
+            """
+
+            for _, row in data.iterrows():
+                values = tuple(row["column1"], row["column2"], ...)  # Replace with actual column names
+                cursor.execute(insert_query, values)
+
+        # Commit the changes and close the connection
+        conn.commit()
+        cursor.close()
+        conn.close()
+    except Exception as e:
+        st.error("Error seeding the database: " + str(e))
+
+
+# Load data or seed the database if necessary
+try:
+    seed_database()
+    data_load_state = st.text("Data seeded into the database")
+except Exception as e:
+    data = load_data(10000)
+    data_load_state = st.text("Data loaded from the external source")
 
 if st.checkbox("Show raw data"):
     st.subheader("Raw data")
@@ -39,5 +93,3 @@ filtered_data = data[data[DATE_COLUMN].dt.hour == hour_to_filter]
 
 st.subheader("Map of all pickups at %s:00" % hour_to_filter)
 st.map(filtered_data)
-
-# Test
