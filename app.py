@@ -26,7 +26,7 @@ def load_data(nrows):
 def seed_database():
     # Connect to the Postgres database
     try:
-        db_binding = pyservicebindings.get_binding("POSTGRESQL", "pg")
+        db_binding = pyservicebinding.get_binding("POSTGRESQL", "pg")
         conn = psycopg2.connect(
             user=db_binding["user"],
             password=db_binding["password"],
