@@ -80,7 +80,7 @@ Pygments==2.14.0
 pylint==2.15.9
 Pympler==1.0.1
 pyparsing==3.0.9
-pyservicebindings=0.3.0
+pyservicebindings==0.3.0
 pyrsistent==0.19.3
 python-dateutil==2.8.2
 pytz==2022.7
