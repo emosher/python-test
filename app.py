@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 import psycopg2
-import pyservicebinding
+from pyservicebinding import binding
 
 st.title("Uber pickups in NYC")
 st.subheader("Built using Tanzu Application Platform v1.3.2 - AppTest")
@@ -26,7 +26,8 @@ def load_data(nrows):
 def seed_database():
     # Connect to the Postgres database
     try:
-        db_binding = pyservicebinding.get_binding("POSTGRESQL", "pg")
+        sb = binding.ServiceBinding()
+        db_binding = sb.bindings("psql")
         conn = psycopg2.connect(
             user=db_binding["user"],
             password=db_binding["password"],
