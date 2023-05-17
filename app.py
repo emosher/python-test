@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 import psycopg2
-import pyservicebindings
+import pyservicebinding
 
 st.title("Uber pickups in NYC")
 st.subheader("Built using Tanzu Application Platform v1.3.2 - AppTest")
